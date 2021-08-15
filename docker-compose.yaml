@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  hl:
+    build:
+      context: .
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./:/HL
+    container_name: HL_APP
+    command: >
+      sh -c " cd HL &&
+            python manage.py makemigrations &&
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=hl
+      - DB_USER=vinhle
+      - DB_PASS=Avengers2021
+      - DB_PORT=5432
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13-alpine
+    container_name: HL_DB
+    environment:
+      - POSTGRES_DB=hl
+      - POSTGRES_USER=vinhle
+      - POSTGRES_PASSWORD=Avengers2021
+    ports:
+      - "5434:5432"

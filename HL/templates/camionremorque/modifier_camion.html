@@ -1,0 +1,112 @@
+{%extends 'base.html'%}{% block title %} Welcome {% endblock %} 
+{% block content%} {% load static %}
+<div class="wrapper">
+  {% include 'partials/_sidebar.html'%}
+  <div class="main">
+    {% include 'partials/_navbar.html'%}
+
+    <main class="content">
+      <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Responsive DataTables</h1>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Responsive DataTables</h5>
+                <h6 class="card-subtitle text-muted">
+                  Highly flexible tool that many advanced features to any HTML
+                  table. See official documentation
+                  <a
+                    href="https://datatables.net/extensions/responsive/"
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    >here</a
+                  >.
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="mb-3 error-placeholder">
+                  <label class="form-label">Select2</label>
+                  <div class="d-flex">
+                    <select
+                      name="validation-select2"
+                      class="form-control valodo"
+                      id="selectjs-1-1"
+                      style="width: 100%"
+                      required
+                    >
+                      <option value=""></option>
+                    </select>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="inputAddress"
+                      placeholder="1234 Main St"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    {% include 'partials/_footer.html'%}
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Initialize Select2 select box
+      $('select[name="validation-select2"]')
+        .select2({
+          allowClear: true,
+          placeholder: "Select gear...",
+          ajax: {
+            type: "GET",
+
+            dataType: "json",
+            url: function (params) {
+              loca = "loadMore/" + params.term;
+              console.log(loca);
+              return loca;
+            },
+
+            processResults: function (data) {
+              lista = [];
+              for (d in data) {
+                lista.push(data[d]);
+              }
+
+              var fin = [];
+              fin = data;
+              console.log("lista " + lista);
+              console.log("fin " + fin);
+
+              return {
+                results: $.map(fin, function (item) {
+                  $("#inputAddress").val(item.remorque);
+                  // $eventSelect2.on("select2:select", function (e) {
+                  //     nom = e.params.data.id
+                  //     valeur = e.params.data.text
+                  //     var $newOption = $("<option selected='selected'></option>").val(valeur).text(nom)
+                  //     $("#selectjs-1-1").append($newOption).trigger('change');
+                  // })
+                  return {
+                    text: item.matriculation,
+                    id: item.id,
+                  };
+                }),
+              };
+            },
+            cache: true,
+          },
+        })
+        .change(function () {
+          $(this).valid();
+        });
+    });
+  </script>
+  <!-- <script src="{% static 'js/main.js' %}"></script> -->
+</div>
+{% endblock %}
