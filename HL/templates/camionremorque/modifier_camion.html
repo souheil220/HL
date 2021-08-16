@@ -13,40 +13,42 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="card-title">Responsive DataTables</h5>
-                <h6 class="card-subtitle text-muted">
-                  Highly flexible tool that many advanced features to any HTML
-                  table. See official documentation
-                  <a
-                    href="https://datatables.net/extensions/responsive/"
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    >here</a
-                  >.
-                </h6>
+                <h5 class="card-title">Modifier la remorque d'un camion</h5>
               </div>
-              <div class="card-body">
-                <div class="mb-3 error-placeholder">
-                  <label class="form-label">Select2</label>
-                  <div class="d-flex">
-                    <select
-                      name="validation-select2"
-                      class="form-control valodo"
-                      id="selectjs-1-1"
-                      style="width: 100%"
-                      required
-                    >
-                      <option value=""></option>
-                    </select>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="inputAddress"
-                      placeholder="1234 Main St"
-                    />
+              <form method="POST" action="#">
+                {% csrf_token %}
+                <div class="card-body">
+                  <div class="mb-3 error-placeholder">
+                    <div style="display: flex; justify-content: space-around">
+                      <label class="form-label">Camion</label>
+                      <label class="form-label">Remorque</label>
+                    </div>
+                    <div class="d-flex">
+                      <select
+                        name="validation-select2"
+                        class="form-control valodo"
+                        id="selectjs-1-1"
+                        style="width: 100%"
+                        required
+                      >
+                        <option value=""></option>
+                      </select>
+                      <input
+                      name="remorque"
+                        type="text"
+                        class="form-control"
+                        id="inputAddress"
+                        placeholder=""
+                      />
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: flex-end">
+                    <button class="btn btn-pill btn-primary">
+                      Enregistrer
+                    </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -61,7 +63,7 @@
       $('select[name="validation-select2"]')
         .select2({
           allowClear: true,
-          placeholder: "Select gear...",
+          placeholder: "Selectoiner un camion ...",
           ajax: {
             type: "GET",
 
@@ -85,13 +87,6 @@
 
               return {
                 results: $.map(fin, function (item) {
-                  $("#inputAddress").val(item.remorque);
-                  // $eventSelect2.on("select2:select", function (e) {
-                  //     nom = e.params.data.id
-                  //     valeur = e.params.data.text
-                  //     var $newOption = $("<option selected='selected'></option>").val(valeur).text(nom)
-                  //     $("#selectjs-1-1").append($newOption).trigger('change');
-                  // })
                   return {
                     text: item.matriculation,
                     id: item.id,
@@ -105,8 +100,16 @@
         .change(function () {
           $(this).valid();
         });
+        
     });
+    
+    $('select[name="validation-select2"]').on("select2:close", function (e) {
+      var pos = lista.map(function (event) {
+        return event.id;
+      }).indexOf(parseInt($('select[name="validation-select2"]').val()))
+      $("#inputAddress").val(lista[pos]['remorque']);
+      
+    })
   </script>
-  <!-- <script src="{% static 'js/main.js' %}"></script> -->
 </div>
 {% endblock %}

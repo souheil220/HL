@@ -1,6 +1,6 @@
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
-from .models import Camion
+from .models import Camion, Remorque
 import json
 
 # Create your views here.
@@ -14,6 +14,21 @@ def index(request):
     )
 
 def modifierCamion(request):
+    if request.method == 'POST':
+        camion = request.POST.get('validation-select2')
+        remorque = request.POST.get('remorque')
+        my_camion = Camion.objects.get(id = camion)
+        try:
+            remorque = Remorque.objects.get(matriculation = remorque)
+            my_camion.remorque = remorque
+
+        except:
+            new_remorque = Remorque(matriculation = remorque)
+            new_remorque.save()
+            print("new remorque ",new_remorque.matriculation)
+            my_camion.remorque = new_remorque
+
+        my_camion.save()
     return render(
         request,
         'camionremorque/modifier_camion.html'
