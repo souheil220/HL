@@ -1,40 +1,44 @@
 from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from .models import Camion, Remorque
 import json
 
 # Create your views here.
 
+
 def index(request):
     camions = Camion.objects.all()
-    context = {"camions":camions}
+    context = {"camions": camions}
     return render(
         request,
-        'camionremorque/index.html',context
+        'camionremorque/index.html', context
     )
+
 
 def modifierCamion(request):
     if request.method == 'POST':
         camion = request.POST.get('validation-select2')
         remorque = request.POST.get('remorque')
-        my_camion = Camion.objects.get(id = camion)
+        my_camion = get_object_or_404(Camion, id=camion)
         try:
-            remorque = Remorque.objects.get(matriculation = remorque)
+            remorque = Remorque.objects.get(matriculation=remorque)
             my_camion.remorque = remorque
 
         except:
-            new_remorque = Remorque(matriculation = remorque)
+            new_remorque = Remorque(matriculation=remorque)
             new_remorque.save()
-            print("new remorque ",new_remorque.matriculation)
+            print("new remorque ", new_remorque.matriculation)
             my_camion.remorque = new_remorque
 
+        print("my_camion.remorque ", my_camion.remorque.matriculation)
         my_camion.save()
     return render(
         request,
         'camionremorque/modifier_camion.html'
     )
 
-def loadMore(request,name):
+
+def loadMore(request, name):
     if request.is_ajax and request.method == "GET":
         result = Camion.objects.filter(matriculation__icontains=name)[:5]
         data = {}
